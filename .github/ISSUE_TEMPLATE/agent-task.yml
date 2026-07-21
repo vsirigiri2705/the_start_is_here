@@ -1,0 +1,53 @@
+name: Agent task
+description: A bounded implementation or review task for a human, Codex, or Claude
+title: "[TASK-ID] "
+labels: []
+body:
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Owner
+      options:
+        - Human
+        - Codex
+        - Claude
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User-visible outcome
+      description: Describe what becomes possible when this task is complete.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Exclusive file scope
+      description: List files or directories this task may change.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and contracts
+      description: Link prerequisite issues, decisions, and shared contracts.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ] Behavior implemented
+        - [ ] Relevant tests added and passing
+        - [ ] Documentation updated
+        - [ ] Handoff completed
+        - [ ] No secrets committed
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Required verification
+      description: Name the checks and tests that must run.
+    validations:
+      required: true
