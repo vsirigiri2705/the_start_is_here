@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: The Start Is Here API
+  version: 0.1.0
+  description: Contract for the authentication vertical slice and protected dashboard.
+servers:
+  - url: /api/v1
+tags:
+  - name: Authentication
+  - name: Users
+  - name: Dashboard
+paths:
+  /auth/login:
+    post:
+      tags: [Authentication]
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication succeeded and a refresh cookie was set.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/AuthenticationProblem'
+        '429':
+          $ref: '#/components/responses/RateLimitProblem'
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      operationId: refreshSession
+      security: []
+      responses:
+        '200':
+          description: Refresh token rotated successfully.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          $ref: '#/components/responses/AuthenticationProblem'
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      operationId: logout
+      security: []
+      responses:
+        '204':
+          description: Session revoked when present and refresh cookie cleared.
+  /users/me:
+    get:
+      tags: [Users]
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+        '401':
+          $ref: '#/components/responses/AuthenticationProblem'
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      operationId: getDashboard
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard summary for the current member.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+        '401':
+          $ref: '#/components/responses/AuthenticationProblem'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          minLength: 1
+          maxLength: 1024
+          writeOnly: true
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      required: [accessToken, tokenType, expiresIn, user]
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+          const: Bearer
+        expiresIn:
+          type: integer
+          description: Access-token lifetime in seconds.
+          minimum: 1
+        user:
+          $ref: '#/components/schemas/UserSummary'
+    UserSummary:
+      type: object
+      additionalProperties: false
+      required: [id, email, displayName, roles]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            enum: [MEMBER, ADMIN]
+    DashboardResponse:
+      type: object
+      additionalProperties: false
+      required: [user, continueLearning, featuredTopics, recentActivity]
+      properties:
+        user:
+          $ref: '#/components/schemas/UserSummary'
+        continueLearning:
+          type: array
+          items:
+            $ref: '#/components/schemas/LearningCard'
+        featuredTopics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicCard'
+        recentActivity:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityItem'
+    LearningCard:
+      type: object
+      additionalProperties: false
+      required: [topicSlug, lessonSlug, title, progressPercent]
+      properties:
+        topicSlug:
+          type: string
+        lessonSlug:
+          type: string
+        title:
+          type: string
+        progressPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+    TopicCard:
+      type: object
+      additionalProperties: false
+      required: [slug, title, summary]
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+    ActivityItem:
+      type: object
+      additionalProperties: false
+      required: [id, description, occurredAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail, instance, traceId]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+        traceId:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+  responses:
+    ValidationProblem:
+      description: Request validation failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    AuthenticationProblem:
+      description: Authentication is required or failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    RateLimitProblem:
+      description: Too many authentication attempts.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'

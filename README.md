@@ -20,6 +20,7 @@ Start with these documents:
 - [Delivery workboard](docs/project/WORKBOARD.md)
 - [Decision log](docs/project/DECISIONS.md)
 - [Agent handoff template](docs/project/HANDOFF_TEMPLATE.md)
+- [Shared implementation contracts](docs/contracts/)
 
 GitHub Projects is the shared dashboard for the human owner, Codex, and Claude. GitHub Issues hold task definitions, pull requests hold code and reviews, and the documents above preserve decisions that must survive individual AI conversations.
 

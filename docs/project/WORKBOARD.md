@@ -24,11 +24,11 @@ The live dashboard should be a GitHub Project. This file is the repository-owned
 
 | ID | Work item | Owner | Depends on | Status | Acceptance evidence |
 |---|---|---|---|---|---|
-| M0-01 | Approve name, audience, registration policy and initial topics | Human | — | Ready | Decision log entries accepted |
-| M0-02 | Define system architecture and boundaries | Codex | — | In review | Architecture document renders correctly |
-| M0-03 | Define agent rules, workboard and handoff format | Codex | — | In review | Agent files present and consistent |
+| M0-01 | Approve name, audience, registration policy and initial topics | Human | — | In progress | Decision log entries accepted |
+| M0-02 | Define system architecture and boundaries | Codex | — | Done | Architecture document renders correctly |
+| M0-03 | Define agent rules, workboard and handoff format | Codex | — | Done | Agent files present and consistent |
 | M0-04 | Create GitHub Project, labels and milestones | Human + Codex | M0-03 | Ready | Project board linked from README |
-| M0-05 | Define API, authentication, route and design contracts | Codex | M0-01 | Backlog | Contracts reviewed by Claude and human |
+| M0-05 | Define API, authentication, route and design contracts | Codex | M0-01 | In review | Contracts reviewed by Claude and human |
 
 ## Milestone 1 — Authentication vertical slice
 
