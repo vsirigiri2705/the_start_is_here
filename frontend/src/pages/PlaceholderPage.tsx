@@ -1,0 +1,4 @@
+import { Construction } from 'lucide-react'
+export function PlaceholderPage({ title }: { title: string }) { return <div className="placeholder"><Construction/><p className="kicker">COMING IN MILESTONE 2</p><h1>{title}</h1><p>This space is ready for the next part of your learning hub.</p></div> }
+export function UnauthorizedPage() { return <main className="standalone-state"><span>403</span><h1>This area isn’t available to you</h1><p>Your account doesn’t have the required permission.</p><a className="button primary" href="/dashboard">Return to dashboard</a></main> }
+export function NotFoundPage() { return <main className="standalone-state"><span>404</span><h1>That page wandered off</h1><p>We couldn’t find the page you were looking for.</p><a className="button primary" href="/dashboard">Return to dashboard</a></main> }
