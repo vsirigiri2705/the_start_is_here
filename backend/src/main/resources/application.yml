@@ -1,0 +1,23 @@
+spring:
+  application.name: learning-hub-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/learning_hub}
+    username: ${DATABASE_USER:learning_hub}
+    password: ${DATABASE_PASSWORD:learning_hub_local}
+  jpa:
+    open-in-view: false
+    hibernate.ddl-auto: validate
+  flyway.enabled: true
+server:
+  error.include-message: never
+management.endpoints.web.exposure.include: health,info
+app:
+  security:
+    issuer: ${JWT_ISSUER:https://the-start-is-here.local}
+    audience: learning-hub-api
+    access-token-ttl: PT10M
+    refresh-token-ttl: PT168H
+    secure-cookie: ${SECURE_COOKIE:false}
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+    # Development-only default. Production must supply a random 32+ byte value.
+    jwt-secret: ${JWT_SECRET:local-development-secret-change-me-1234567890}
